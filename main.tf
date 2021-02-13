@@ -2,25 +2,23 @@ provider "aws"  {
     region = "us-east-1"
 }
 
-variable "cidr_blocks" {
-    description = "cidr blocks for vpc and subnets"
-    type = list(string)
-}
+variable vpc_cidr_block {}
+variable subnet_cidr_block {}
+variable avail_zone {}
+variable env_prefix{}
 
-
-
-resource "aws_vpc" "development-vpc" {
-    cidr_block = var.cidr_blocks[0]
+resource "aws_vpc" "myapp-vpc" {
+    cidr_block = var.vpc_cidr_block
     tags = {
-        Name = "development"
+        Name = "${var.env_prefix}-vpc"
     }
 }
 
 resource "aws_subnet" "dev-subnet-1" {
-    vpc_id = aws_vpc.development-vpc.id
-    cidr_block = var.cidr_blocks[1]
-    availability_zone = "us-east-1b"
+    vpc_id = aws_vpc.myapp-vpc.id
+    cidr_block = var.subnet_cidr_block
+    availability_zone = var.avail_zone
     tags = {
-        Name: "subnet-1-dev"
+        Name: "${var.env_prefix}-subnet-1"
     }
 }
